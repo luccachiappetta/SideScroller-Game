@@ -6,28 +6,40 @@ public class PlayerMovement : MonoBehaviour {
 
 	public CharacterController2D controller;
 	public Animator animate;
+	public ParticleSystem partJump;
+	public ParticleSystem partLand;
 
     public float runSpeed = 40f;
 
 	float m_HorizontalMove = 0f;
 	bool m_Jump = false;
 	bool m_Crouch = false;
+	bool m_Slide = false;
 
     // Update is called once per frame
     void Update () {
 
+	    //move
 		m_HorizontalMove = Input.GetAxisRaw("Horizontal") * runSpeed;
-
 		animate.SetFloat("speed", Mathf.Abs(m_HorizontalMove));
 
+	    //jump
 		if (Input.GetButtonDown("Jump"))
 		{
 			Debug.Log("jump");
 			
 			animate.SetBool("isJump", true);
+			partJump.Play();
 			m_Jump = true;
 		}
 
+		//attack
+		if (Input.GetButton("Attack"))
+		{
+			animate.SetTrigger("Attack1");
+		}
+		
+		//crouch
 		if (Input.GetButtonDown("Crouch"))
 		{
 			m_Crouch = true;
@@ -42,13 +54,17 @@ public class PlayerMovement : MonoBehaviour {
 	{
 		// Move our character
 		controller.Move(m_HorizontalMove * Time.fixedDeltaTime, m_Crouch, m_Jump);
-        m_Jump = false;
+		// controller.Attack();
+
+		m_Jump = false;
     }
 
 	public void OnLanding()
     {
 		animate.SetBool("isJump", false);
 		animate.SetBool("isFalling", false);
+		
+		partLand.Play();
     }
 
 	public void OnFalling()

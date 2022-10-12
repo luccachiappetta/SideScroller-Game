@@ -1,18 +1,36 @@
+using System;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.TextCore;
 
 public class CharacterController2D : MonoBehaviour
 {
-    [SerializeField] private float m_JumpForce = 400f;                          // Amount of force added when the player jumps.
-    [Range(0, 1)][SerializeField] private float m_CrouchSpeed = .36f;           // Amount of maxSpeed applied to crouching movement. 1 = 100%
-    [Range(0, .3f)][SerializeField] private float m_MovementSmoothing = .05f;   // How much to smooth out the movement
-    [SerializeField] private bool m_AirControl = false;                         // Whether or not a player can steer while jumping;
-    [SerializeField] private LayerMask m_WhatIsGround;                          // A mask determining what is ground to the character
-    [SerializeField] private Transform m_GroundCheck;                           // A position marking where to check if the player is grounded.
-    [SerializeField] private Transform m_CeilingCheck;                          // A position marking where to check for ceilings
-    [SerializeField] private Collider2D m_CrouchDisableCollider;                // A collider that will be disabled when crouching
+    //Jumping
+    [SerializeField] private float m_JumpForce = 400f;
+    [SerializeField] private bool m_AirControl = false;
+    private bool m_isFalling;
+    
+    //Movement
+    [Range(0, .3f)][SerializeField] private float m_MovementSmoothing = .05f;
+    private bool m_FacingRight = true;
+    private Vector3 m_Velocity = Vector3.zero;
+    private Rigidbody2D m_Rigidbody2D;
+  
+    //Ground Checks
+    [SerializeField] private LayerMask m_WhatIsGround;
+    [SerializeField] private Transform m_GroundCheck;
+    private bool m_Grounded;
+    
+    const float k_GroundedRadius = .2f;
+    const float k_CeilingRadius = .2f;
 
+    //Crouch Check
+    [SerializeField] private Transform m_CeilingCheck;
+    [SerializeField] private Collider2D m_CrouchDisableCollider;
+    [Range(0, 1)][SerializeField] private float m_CrouchSpeed = .36f;
+    [SerializeField] private float m_SlideSpeed = 2f;
+    
+    //Player info
     public static CharacterController2D myPlayer;
     public Vector3 lastPos
     {
@@ -25,18 +43,10 @@ public class CharacterController2D : MonoBehaviour
             lastPos = value;
         }
     }
-
-    const float k_GroundedRadius = .2f; // Radius of the overlap circle to determine if grounded
-    private bool m_Grounded;            // Whether or not the player is grounded.
-    private bool m_isFalling;
-    const float k_CeilingRadius = .2f; // Radius of the overlap circle to determine if the player can stand up
-    private Rigidbody2D m_Rigidbody2D;
-    private bool m_FacingRight = true;  // For determining which way the player is currently facing.
-    private Vector3 m_Velocity = Vector3.zero;
-
+    
+    //Events
     [Header("Events")]
     [Space]
-
     public UnityEvent OnLandEvent;
 
     [System.Serializable]
@@ -53,11 +63,9 @@ public class CharacterController2D : MonoBehaviour
 
         m_Rigidbody2D = GetComponent<Rigidbody2D>();
 
-        if (OnLandEvent == null)
-            OnLandEvent = new UnityEvent();
+        OnLandEvent ??= new UnityEvent();
 
-        if (OnCrouchEvent == null)
-            OnCrouchEvent = new BoolEvent();
+        OnCrouchEvent ??= new BoolEvent();
         
         if (OnCrouchEvent == null)
             OnFallEvent = new UnityEvent();
@@ -67,9 +75,8 @@ public class CharacterController2D : MonoBehaviour
     {
         bool wasGrounded = m_Grounded;
         m_Grounded = false;
-
-        // The player is grounded if a circlecast to the groundcheck position hits anything designated as ground
-        // This can be done using layers instead but Sample Assets will not overwrite your project settings.
+        
+        //Ground Check
         Collider2D[] colliders = Physics2D.OverlapCircleAll(m_GroundCheck.position, k_GroundedRadius, m_WhatIsGround);
         // Gizmos.DrawSphere(m_GroundCheck.position, k_GroundedRadius);
         for (int i = 0; i < colliders.Length; i++)
@@ -82,7 +89,7 @@ public class CharacterController2D : MonoBehaviour
             }
         }
 
-        // Debug.Log(m_Rigidbody2D.velocity);
+        // Fall Check
         if (!m_Grounded && m_Rigidbody2D.velocity.y <= 0)
         {
             // Debug.Log("Falling!!");
@@ -115,10 +122,10 @@ public class CharacterController2D : MonoBehaviour
                     m_wasCrouching = true;
                     OnCrouchEvent.Invoke(true);
                 }
-
+                
                 // Reduce the speed by the crouchSpeed multiplier
                 move *= m_CrouchSpeed;
-
+                
                 // Disable one of the colliders when crouching
                 if (m_CrouchDisableCollider != null)
                     m_CrouchDisableCollider.enabled = false;
@@ -163,6 +170,17 @@ public class CharacterController2D : MonoBehaviour
         }
     }
 
+    public void Attack()
+    {
+        if (!m_Grounded)
+        {
+            //attack 1
+        }
+        else if (m_Grounded)
+        {
+            //air attack
+        }
+    }
 
     private void Flip()
     {
