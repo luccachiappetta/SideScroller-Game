@@ -1,20 +1,20 @@
 using System.Collections;
 using System.Collections.Generic;
+using UnityEditor.Build;
 using UnityEngine;
 
 public class PlayerMovement : MonoBehaviour {
 
 	public CharacterController2D controller;
 	public Animator animate;
-	public ParticleSystem partJump;
-	public ParticleSystem partLand;
 
-    public float runSpeed = 40f;
+	public float runSpeed = 40f;
 
 	float m_HorizontalMove = 0f;
 	bool m_Jump = false;
 	bool m_Crouch = false;
 	bool m_Slide = false;
+	private bool m_Dash = false;
 
     // Update is called once per frame
     void Update () {
@@ -29,8 +29,13 @@ public class PlayerMovement : MonoBehaviour {
 			Debug.Log("jump");
 			
 			animate.SetBool("isJump", true);
-			partJump.Play();
+			
 			m_Jump = true;
+		}
+
+		if (Input.GetKeyDown(KeyCode.Q))
+		{
+			m_Dash = true;
 		}
 
 		//attack
@@ -53,10 +58,11 @@ public class PlayerMovement : MonoBehaviour {
 	void FixedUpdate ()
 	{
 		// Move our character
-		controller.Move(m_HorizontalMove * Time.fixedDeltaTime, m_Crouch, m_Jump);
+		controller.Move(m_HorizontalMove * Time.fixedDeltaTime, m_Crouch, m_Jump, m_Dash);
 		// controller.Attack();
 
 		m_Jump = false;
+		m_Dash = false;
     }
 
 	public void OnLanding()
@@ -64,7 +70,7 @@ public class PlayerMovement : MonoBehaviour {
 		animate.SetBool("isJump", false);
 		animate.SetBool("isFalling", false);
 		
-		partLand.Play();
+		
     }
 
 	public void OnFalling()
@@ -76,4 +82,9 @@ public class PlayerMovement : MonoBehaviour {
     {
 		animate.SetBool("isCrouch", isCrouch);
     }
+
+	public void onWallSlide(bool isWall)
+	{
+		animate.SetBool("isWallSlide", isWall);
+	}
 }
