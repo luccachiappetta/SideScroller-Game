@@ -1,5 +1,4 @@
 using System;
-using EZCameraShake;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.TextCore;
@@ -60,8 +59,6 @@ public class CharacterController2D : MonoBehaviour
     public BoolEvent onWallEvent;
     private bool wall = false;
 
-    private CameraShaker cameraShake;
-    
 
     private void Awake()
     {

@@ -31,6 +31,8 @@ public abstract class Enemies : MonoBehaviour
     //     return Vector3.Distance(transform.position, CharacterController2D.myPlayer.transform.position);
     // }
 
+    public abstract void attackPlayer();
+
     private void OnDrawGizmos()
     {
         Gizmos.DrawRay(transform.position, transform.TransformDirection(Vector3.left) * SightRange);

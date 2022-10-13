@@ -10,6 +10,14 @@ public class Assasin : Enemies
     {
         SightRange = 5f;
     }
+    
+    //run at player
+    
+    //attack player
 
     // Update is called once per frame
+    public override void attackPlayer()
+    {
+        Debug.Log("test");
+    }
 }
