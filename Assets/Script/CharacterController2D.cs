@@ -66,6 +66,8 @@ public class CharacterController2D : MonoBehaviour
     public UnityEvent OnFallEvent;
     public BoolEvent onWallEvent;
     private bool wall = false;
+
+    private bool canDash;
     
 
 
@@ -98,6 +100,7 @@ public class CharacterController2D : MonoBehaviour
                 m_Grounded = true;
                 if (!wasGrounded)
                 {
+                    canDash = true;
                     partLand.Play();
                     OnLandEvent.Invoke();
                 }
@@ -215,8 +218,8 @@ public class CharacterController2D : MonoBehaviour
 
     public void Dash()
     {
-        // m_Rigidbody2D.velocity = Vector2.zero;
-        m_Rigidbody2D.velocity += new Vector2(50f * transform.localScale.x, 0);
+        m_Rigidbody2D.velocity = Vector2.zero;
+        m_Rigidbody2D.velocity += new Vector2(50f * transform.localScale.x, 10);
         m_Rigidbody2D.drag = 50f;
 
         partDash.Play();

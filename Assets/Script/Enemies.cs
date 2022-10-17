@@ -21,7 +21,16 @@ public abstract class Enemies : MonoBehaviour, IDamagable
 
     private void Awake()
     {
-        e_RigidBody = this.GetComponent<Rigidbody2D>();
+        // e_RigidBody = this.GetComponent<Rigidbody2D>();
+    }
+    
+    void FixedUpdate()
+    {
+        // if (CanSeePlayer())
+        // {
+        //     RunToPlayer();
+        //     AttackPlayer();
+        // }
     }
 
     public virtual bool CanSeePlayer()
@@ -37,15 +46,6 @@ public abstract class Enemies : MonoBehaviour, IDamagable
         }
     }
 
-    void FixedUpdate()
-    {
-        if (CanSeePlayer())
-        {
-            RunToPlayer();
-            AttackPlayer();
-        }
-    }
-
     public virtual void AttackPlayer()
     {
         if (Physics2D.OverlapCircle(transform.position, AttackRange))
@@ -54,12 +54,9 @@ public abstract class Enemies : MonoBehaviour, IDamagable
         }
     }
 
-    protected void RunToPlayer()
+    protected void WalkToPlayer()
     {
-        // Vector3 targetVelocity = new Vector2(move * 10f, m_Rigidbody2D.velocity.y);
-
-        // Move Smooth
-        // e_RigidBody.velocity = Vector2.left;
+        Debug.Log("Walk");
     }
 
     public void Damage(float DamageAmount)
