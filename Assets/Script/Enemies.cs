@@ -3,39 +3,88 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public abstract class Enemies : MonoBehaviour
+public abstract class Enemies : MonoBehaviour, IDamagable
 {
+    public CharacterController2D EnemyController;
+    
     protected float e_HEALTH;
     protected float e_DAMAGE;
+    protected float e_SPEED;
 
-    [SerializeField] LayerMask WhatCanSee;
+    [SerializeField] protected LayerMask WhatCanSee;
 
     protected float AttackRange;
     protected float SightRange;
-    
-    void CanSeePlayer()
+
+    [SerializeField] protected Animator animate;
+    protected Rigidbody2D e_RigidBody;
+
+    private void Awake()
+    {
+        e_RigidBody = this.GetComponent<Rigidbody2D>();
+    }
+
+    public virtual bool CanSeePlayer()
     {
         if (Physics2D.Raycast(transform.position, Vector2.left, SightRange, WhatCanSee))
         {
-            Debug.Log("i see you");
+            return true;
+            // Debug.Log("i see you");
+        }
+        else
+        {
+            return false;
         }
     }
-    
-    void Update()
-    { 
-        CanSeePlayer();
+
+    void FixedUpdate()
+    {
+        if (CanSeePlayer())
+        {
+            RunToPlayer();
+            AttackPlayer();
+        }
     }
 
-    // protected float DistanceToPlayer()
-    // {
-    //     return Vector3.Distance(transform.position, CharacterController2D.myPlayer.transform.position);
-    // }
+    public virtual void AttackPlayer()
+    {
+        if (Physics2D.OverlapCircle(transform.position, AttackRange))
+        {
+            animate.SetTrigger("Attack");
+        }
+    }
 
-    public abstract void attackPlayer();
+    protected void RunToPlayer()
+    {
+        // Vector3 targetVelocity = new Vector2(move * 10f, m_Rigidbody2D.velocity.y);
 
+        // Move Smooth
+        // e_RigidBody.velocity = Vector2.left;
+    }
+
+    public void Damage(float DamageAmount)
+    {
+        e_HEALTH -= DamageAmount;
+        Debug.Log("hit enemy");
+        animate.SetTrigger("Hit");
+
+        if (e_HEALTH < 1)
+        {
+            animate.SetTrigger("Death");
+            StartCoroutine(Death());
+        }
+    }
+
+    IEnumerator Death()
+    {
+        yield return new WaitForSeconds(3);
+        Destroy(gameObject);
+    }
+    
     private void OnDrawGizmos()
     {
-        Gizmos.DrawRay(transform.position, transform.TransformDirection(Vector3.left) * SightRange);
-        Gizmos.color = Color.blue;
+        Gizmos.DrawWireSphere(transform.position, SightRange);
+        Gizmos.DrawWireSphere(transform.position, AttackRange);
     }
+    
 }
