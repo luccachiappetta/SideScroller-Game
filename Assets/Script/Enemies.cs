@@ -5,7 +5,7 @@ using UnityEngine;
 
 public abstract class Enemies : MonoBehaviour, IDamagable
 {
-    public CharacterController2D EnemyController;
+    // public CharacterController2D EnemyController;
     
     protected float e_HEALTH;
     protected float e_DAMAGE;

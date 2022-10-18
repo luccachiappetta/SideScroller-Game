@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.TextCore;
@@ -18,6 +19,7 @@ public class CharacterController2D : MonoBehaviour
     private bool m_FacingRight = true;
     private Vector3 m_Velocity = Vector3.zero;
     private Rigidbody2D m_Rigidbody2D;
+    
 
     //Ground Checks
     [SerializeField] private LayerMask m_WhatIsGround;
@@ -45,12 +47,18 @@ public class CharacterController2D : MonoBehaviour
     [SerializeField] private float m_SlideSpeed = 2f;
 
     //Player info
-    public static CharacterController2D myPlayer;
+    public static CharacterController2D character;
+    public int m_Health;
+    public float m_Stamina;
+    public bool m_HasKey = false;
     [SerializeField] private LayerMask canHit;
     
     //Attack
     private float attackRange = 0.75f;
     [Range(1,20)] [SerializeField] private float PlayerDamage = 10f;
+    
+    //dash
+    private bool canDash = true;
 
     //Events
     [Header("Events")] [Space] public UnityEvent OnLandEvent;
@@ -67,14 +75,12 @@ public class CharacterController2D : MonoBehaviour
     public BoolEvent onWallEvent;
     private bool wall = false;
 
-    private bool canDash;
-    
-
 
     private void Awake()
     {
-        myPlayer = this;
+        character = this;
 
+        m_Stamina = 100f;
         m_Rigidbody2D = GetComponent<Rigidbody2D>();
 
         OnLandEvent ??= new UnityEvent();
@@ -100,7 +106,6 @@ public class CharacterController2D : MonoBehaviour
                 m_Grounded = true;
                 if (!wasGrounded)
                 {
-                    canDash = true;
                     partLand.Play();
                     OnLandEvent.Invoke();
                 }
@@ -218,14 +223,27 @@ public class CharacterController2D : MonoBehaviour
 
     public void Dash()
     {
-        m_Rigidbody2D.velocity = Vector2.zero;
-        m_Rigidbody2D.velocity += new Vector2(50f * transform.localScale.x, 10);
-        m_Rigidbody2D.drag = 50f;
+        if (m_Stamina >= 100)
+        {
+            m_Rigidbody2D.velocity = Vector2.zero;
+            m_Rigidbody2D.velocity += new Vector2(50f * transform.localScale.x, 10);
+            m_Rigidbody2D.drag = 50f;
 
-        partDash.Play();
-
-
+            partDash.Play();
+            m_Stamina = 0;
+            
+            StartCoroutine(CanDash());
+        }
         // Camera.main.transform.DoComplete
+    }
+
+    IEnumerator CanDash()
+    {
+        while (m_Stamina < 100)
+        {
+            yield return new WaitForSeconds(0.01f);
+            m_Stamina++;
+        }
     }
 
 
