@@ -648,7 +648,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4524426330604858036, guid: 6cd71f4c53a1a4af9ae8ac2cd3153dfa, type: 3}
       propertyPath: m_Offset.x
-      value: 1.2326274
+      value: -0.06
       objectReference: {fileID: 0}
     - target: {fileID: 4524426330604858036, guid: 6cd71f4c53a1a4af9ae8ac2cd3153dfa, type: 3}
       propertyPath: m_Offset.y
@@ -6507,6 +6507,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 76405c3a6798b46c6bc48925ff5f74ba, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  e_HEALTH: 0
+  isDead: 0
   WhatCanSee:
     serializedVersion: 2
     m_Bits: 64
@@ -66307,6 +66309,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: afac3652c2ad84292a55f0cbd04ba869, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  e_HEALTH: 0
+  isDead: 0
   WhatCanSee:
     serializedVersion: 2
     m_Bits: 64
