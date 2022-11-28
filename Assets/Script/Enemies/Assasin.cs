@@ -16,6 +16,16 @@ public class Assasin : Enemies
         e_DAMAGE = 1f;
     }
     
+    public override bool CanSeePlayer()
+    {
+        if (Physics2D.OverlapCircle(transform.position, SightRange, WhatCanSee))
+        {
+            animate.SetBool("Awake",true);
+            return true;
+        }
+        return false;
+    }
+    
     //run at player
     
     //attack player

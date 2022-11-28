@@ -45,11 +45,11 @@ public abstract class Enemies : MonoBehaviour, IDamagable
         Debug.Log("Turn");
     }
 
-    public bool CanSeePlayer()
+    public virtual bool CanSeePlayer()
     {
         if (Physics2D.OverlapCircle(transform.position, SightRange, WhatCanSee))
         {
-            animate.SetBool("Awake",true);
+            // animate.SetBool("Awake",true);
             return true;
         }
         return false;
